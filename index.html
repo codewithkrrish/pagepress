@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PagePress — Free PDF Tools Online, No Uploads</title>
+  <meta name="description" content="Merge, split, convert and render PDFs right in your browser. No uploads, no sign-up, no ads. Your files never leave your device." />
+  <meta name="theme-color" content="#0B0B0F" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://pagepress-app.vercel.app/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="PagePress — Free PDF tools that run in your browser" />
+  <meta property="og:description" content="Merge, split, convert and render PDFs locally. No uploads. No sign-up. No ads." />
+  <meta property="og:site_name" content="PagePress" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="PagePress — Browser PDF Tools" />
+  <meta name="twitter:description" content="Free PDF tools that run entirely in your browser. Your files never leave your device." />
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Libraries. All processing happens locally; these CDN files are the
+       only network requests PagePress ever makes. app.js checks for each
+       library and reports a clear error if one fails to load. -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
+  <!-- JSZip powers the "Download all as ZIP" paths. If it fails to load,
+       the tools fall back to downloading files one by one. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./" aria-label="PagePress home">
+        <span class="brand-mark" aria-hidden="true">P</span>
+        <span>PagePress</span>
+      </a>
+      <nav class="header-nav" aria-label="Primary">
+        <a href="#tools">Tools</a>
+        <a href="#how">How it works</a>
+        <a class="btn-github" href="https://github.com/codewithkrrish/pagepress" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <span class="eyebrow">100% in your browser</span>
+      <h1>PDF tools.<br /><span>Nothing leaves your device.</span></h1>
+      <p>Merge, split, convert and render PDFs right in your browser. No uploads. No sign-up. No ads.</p>
+      <ul class="hero-points">
+        <li>Private by design</li>
+        <li>Merge &amp; split</li>
+        <li>Images ⇄ PDF</li>
+        <li>Free, forever</li>
+      </ul>
+    </section>
+
+    <section class="tool-section container" id="tools" aria-label="PDF tools">
+      <div class="tabs" role="tablist" aria-label="Choose a tool">
+        <button class="tab" type="button" role="tab" id="tab-merge" data-tab="merge" aria-selected="true" aria-controls="panel-merge">Merge PDF</button>
+        <button class="tab" type="button" role="tab" id="tab-split" data-tab="split" aria-selected="false" aria-controls="panel-split" tabindex="-1">Split / Extract</button>
+        <button class="tab" type="button" role="tab" id="tab-img2pdf" data-tab="img2pdf" aria-selected="false" aria-controls="panel-img2pdf" tabindex="-1">Images to PDF</button>
+        <button class="tab" type="button" role="tab" id="tab-pdf2img" data-tab="pdf2img" aria-selected="false" aria-controls="panel-pdf2img" tabindex="-1">PDF to Images</button>
+      </div>
+
+      <!-- ============ MERGE ============ -->
+      <section class="tool-panel" id="panel-merge" role="tabpanel" aria-labelledby="tab-merge" data-panel="merge">
+        <p class="panel-intro"><strong>Merge PDF.</strong> Add two or more PDFs and combine them into one file. The merge order is the order of the list — remove a file or clear the list to change it.</p>
+        <div class="dropzone" id="dz-merge" tabindex="0" role="button" aria-label="Add PDF files to merge. Press Enter to browse, or drag and drop PDF files here.">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
+          </div>
+          <h2>Drag and drop PDFs here</h2>
+          <p>or <span class="browse">browse from your device</span> — you can also paste with Ctrl+V</p>
+          <p class="dropzone-formats">PDF</p>
+          <input class="visually-hidden" type="file" id="input-merge" accept="application/pdf,.pdf" multiple tabindex="-1" aria-hidden="true" />
+        </div>
+        <div class="file-list-wrap" data-list-wrap hidden>
+          <p class="section-label">Files — merge order</p>
+          <ol class="file-list" data-file-list></ol>
+          <p class="list-note">Pages are copied exactly as they are; bookmarks and outlines from the source files are not carried over.</p>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" type="button" data-process disabled>Merge PDFs</button>
+          <button class="btn btn-ghost" type="button" data-clear disabled>Clear list</button>
+        </div>
+        <div class="panel-status" data-status aria-live="polite"></div>
+        <div class="panel-error" data-error role="alert" hidden></div>
+        <div class="results" data-results hidden>
+          <p class="section-label">Result</p>
+          <div class="result-card">
+            <div class="result-info">
+              <div class="result-name" data-result-name></div>
+              <div class="result-meta" data-result-meta></div>
+            </div>
+            <button class="btn btn-primary" type="button" data-result-download>Download merged PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SPLIT / EXTRACT ============ -->
+      <section class="tool-panel" id="panel-split" role="tabpanel" aria-labelledby="tab-split" data-panel="split" hidden>
+        <p class="panel-intro"><strong>Split / Extract.</strong> Pull a set of pages out of one PDF into a new file, or split the whole document into one PDF per page.</p>
+        <div class="dropzone" id="dz-split" tabindex="0" role="button" aria-label="Add one PDF file to split. Press Enter to browse, or drag and drop a PDF file here.">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
+          </div>
+          <h2>Drag and drop one PDF here</h2>
+          <p>or <span class="browse">browse from your device</span> — you can also paste with Ctrl+V</p>
+          <p class="dropzone-formats">PDF · one file</p>
+          <input class="visually-hidden" type="file" id="input-split" accept="application/pdf,.pdf" tabindex="-1" aria-hidden="true" />
+        </div>
+        <div class="file-list-wrap" data-list-wrap hidden>
+          <p class="section-label">File</p>
+          <ol class="file-list" data-file-list></ol>
+        </div>
+        <div class="options">
+          <div class="field">
+            <label for="rangeInput">Pages to extract</label>
+            <input type="text" id="rangeInput" placeholder="e.g. 1-3, 5, 8-10" autocomplete="off" spellcheck="false" />
+            <p class="field-hint" data-range-hint>Add a PDF first — its page count will show here.</p>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" type="button" data-process disabled>Extract pages</button>
+          <button class="btn btn-secondary" type="button" data-split-all disabled>Every page as separate PDF (ZIP)</button>
+          <button class="btn btn-ghost" type="button" data-clear disabled>Clear</button>
+        </div>
+        <div class="panel-status" data-status aria-live="polite"></div>
+        <div class="panel-error" data-error role="alert" hidden></div>
+        <div class="results" data-results hidden>
+          <p class="section-label">Result</p>
+          <div class="result-card">
+            <div class="result-info">
+              <div class="result-name" data-result-name></div>
+              <div class="result-meta" data-result-meta></div>
+            </div>
+            <button class="btn btn-primary" type="button" data-result-download>Download PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ IMAGES TO PDF ============ -->
+      <section class="tool-panel" id="panel-img2pdf" role="tabpanel" aria-labelledby="tab-img2pdf" data-panel="img2pdf" hidden>
+        <p class="panel-intro"><strong>Images to PDF.</strong> Turn JPG and PNG images into a single PDF. Each image becomes one A4 page, fitted inside the margins, in the order of the list.</p>
+        <div class="dropzone" id="dz-img2pdf" tabindex="0" role="button" aria-label="Add JPG or PNG images. Press Enter to browse, or drag and drop image files here.">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
+          </div>
+          <h2>Drag and drop images here</h2>
+          <p>or <span class="browse">browse from your device</span> — you can also paste with Ctrl+V</p>
+          <p class="dropzone-formats">JPG · PNG</p>
+          <input class="visually-hidden" type="file" id="input-img2pdf" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple tabindex="-1" aria-hidden="true" />
+        </div>
+        <div class="file-list-wrap" data-list-wrap hidden>
+          <p class="section-label">Images — page order</p>
+          <ol class="file-list" data-file-list></ol>
+          <p class="list-note">Images are embedded at their original quality — PagePress does not recompress them.</p>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" type="button" data-process disabled>Create PDF</button>
+          <button class="btn btn-ghost" type="button" data-clear disabled>Clear list</button>
+        </div>
+        <div class="panel-status" data-status aria-live="polite"></div>
+        <div class="panel-error" data-error role="alert" hidden></div>
+        <div class="results" data-results hidden>
+          <p class="section-label">Result</p>
+          <div class="result-card">
+            <div class="result-info">
+              <div class="result-name" data-result-name></div>
+              <div class="result-meta" data-result-meta></div>
+            </div>
+            <button class="btn btn-primary" type="button" data-result-download>Download PDF</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PDF TO IMAGES ============ -->
+      <section class="tool-panel" id="panel-pdf2img" role="tabpanel" aria-labelledby="tab-pdf2img" data-panel="pdf2img" hidden>
+        <p class="panel-intro"><strong>PDF to Images.</strong> Render every page of a PDF as an image at 2x resolution — sharp enough for slides, thumbnails and sharing.</p>
+        <div class="dropzone" id="dz-pdf2img" tabindex="0" role="button" aria-label="Add one PDF file to render. Press Enter to browse, or drag and drop a PDF file here.">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
+          </div>
+          <h2>Drag and drop one PDF here</h2>
+          <p>or <span class="browse">browse from your device</span> — you can also paste with Ctrl+V</p>
+          <p class="dropzone-formats">PDF · one file</p>
+          <input class="visually-hidden" type="file" id="input-pdf2img" accept="application/pdf,.pdf" tabindex="-1" aria-hidden="true" />
+        </div>
+        <div class="file-list-wrap" data-list-wrap hidden>
+          <p class="section-label">File</p>
+          <ol class="file-list" data-file-list></ol>
+        </div>
+        <div class="options">
+          <div class="options-grid">
+            <div class="field">
+              <label for="imgFormatSelect">Image format</label>
+              <select id="imgFormatSelect">
+                <option value="png" selected>PNG — lossless, larger files</option>
+                <option value="jpeg">JPG — smaller, slight quality loss</option>
+              </select>
+              <p class="field-hint">Pages are rendered at a fixed 2x scale. JPGs are placed on a white background, since JPG has no transparency.</p>
+            </div>
+          </div>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" type="button" data-process disabled>Render pages</button>
+          <button class="btn btn-ghost" type="button" data-clear disabled>Clear</button>
+        </div>
+        <div class="panel-status" data-status aria-live="polite"></div>
+        <div class="panel-error" data-error role="alert" hidden></div>
+        <div class="results" data-results hidden>
+          <p class="section-label">Rendered pages</p>
+          <div class="panel-actions" style="margin: 0 0 1rem;">
+            <button class="btn btn-secondary btn-small" type="button" data-download-all>Download all as ZIP</button>
+          </div>
+          <div class="page-grid" data-page-grid></div>
+        </div>
+      </section>
+
+      <div class="privacy-strip">
+        <span class="privacy-dot" aria-hidden="true"></span>
+        <p style="margin: 0;"><strong>Your files never leave your device.</strong> Every operation runs locally in this tab — there is no server to upload to, and nothing is stored or tracked.</p>
+      </div>
+    </section>
+
+    <section class="features container" id="how">
+      <p class="section-label">How it works</p>
+      <div class="features-grid">
+        <article class="feature">
+          <h3>Private by design</h3>
+          <p>PagePress reads your files with the browser's own APIs and does the PDF work locally with pdf-lib and PDF.js. No upload queue, no stranger's server, nothing to leak.</p>
+        </article>
+        <article class="feature">
+          <h3>Real PDF editing</h3>
+          <p>Merging and extracting copy the actual pages out of your documents — text stays text and vectors stay sharp. Nothing is flattened into screenshots unless you ask for images.</p>
+        </article>
+        <article class="feature">
+          <h3>Honest about limits</h3>
+          <p>Password-protected PDFs cannot be opened — remove the password first. Very large files are limited by your device's memory, because everything happens on your machine.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>Built by <a href="https://github.com/codewithkrrish" target="_blank" rel="noopener noreferrer">krrish</a> · <a href="https://github.com/codewithkrrish/pagepress" target="_blank" rel="noopener noreferrer">PagePress on GitHub</a></div>
+      <div class="footer-note">Your files are processed locally and never uploaded.</div>
+    </div>
+  </footer>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+</body>
+</html>
